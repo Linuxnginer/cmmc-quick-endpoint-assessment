@@ -1,4 +1,5 @@
-CMMC Quick Endpoint Assessment
+**CMMC Quick Endpoint Assessment**
+
 A lightweight PowerShell tool for performing a technical Windows endpoint readiness assessment against common security requirements relevant to CMMC Level 2 / NIST SP 800-171 Rev. 2.
 Important: This project does not certify CMMC compliance. CMMC assessment requires organizational, procedural, technical, and documentary evidence. This tool is intended to help identify endpoint configuration gaps and collect technical evidence.
 Features
