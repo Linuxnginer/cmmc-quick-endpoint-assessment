@@ -4,87 +4,35 @@
 A lightweight PowerShell-based endpoint assessment tool designed to help organizations quickly identify common Windows security configuration gaps that may affect CMMC Level 2 / NIST SP 800-171 readiness.
 This project is intended to provide a fast technical snapshot of an endpoint before a deeper compliance review, assessment, or remediation effort.
 
+
 Important: This tool does not certify CMMC compliance. CMMC compliance requires organizational policies, procedures, documentation, technical controls, evidence, interviews, and assessment activities. This script focuses specifically on technical endpoint configuration.
 Why Is This Useful?
 CMMC assessments can involve a large number of endpoints, and manually checking every workstation or server can be time-consuming.
 This tool provides a quick way to answer questions such as:
 
 Is Windows Firewall enabled?
+
 Is Microsoft Defender active?
+
 Is BitLocker protecting the operating-system drive?
+
 Is Secure Boot enabled?
+
 Is UAC enabled?
-Is the workstation configured to automatically lock?
-Is the required login/security banner configured?
-Is Remote Desktop enabled?
-Is SMBv1 still enabled?
-Is Windows Update running?
-Is LSA Protection enabled?
-Is Windows Time running?
-Is PowerShell logging configured?
-Are unexpected users members of the local Administrators group?
-Does the endpoint have a pending reboot?
+
 Instead of manually checking each endpoint, the administrator can run one script and receive a standardized report.
-The Goal
+
+**The Goal**
+
 The goal is not to say:
+
 "This computer is CMMC compliant."
 The goal is to say:
 "Here are the technical configuration checks this endpoint passed or failed, along with evidence that can be reviewed."
 That distinction is important.
 A CMMC requirement can involve much more than a Windows registry setting or security feature. An organization may need policies, procedures, documentation, centralized security controls, evidence of operation, and personnel interviews.
 
-This tool therefore works best as an endpoint readiness and evidence-collection tool.
 
-What Does It Check?
-The quick assessment currently evaluates several areas of Windows endpoint security.
-Access Control
-The script checks configuration related to endpoint access, including:
-Local Administrators
-Remote Desktop
-Least-privilege configuration
-Login/security banner
-This can help identify endpoints where excessive administrative access or unauthorized remote access may exist.
-Identification and Authentication
-The script checks:
-User Account Control
-Automatic workstation locking
-Password-policy information
-Login banner configuration
-These checks can quickly identify endpoints that may not match your organization's security baseline.
-Audit and Accountability
-The script checks:
-Windows audit policy
-PowerShell Script Block logging
-PowerShell Module logging
-Windows Time service
-Consistent time and logging are particularly useful when investigating security events and correlating activity across systems.
-Configuration Management
-The assessment checks endpoint configuration such as:
-Windows version/build
-LSA Protection
-SMB configuration
-Security configuration
-This provides a quick way to identify machines that have drifted away from the organization's approved baseline.
-System and Communications Protection
-The scanner checks:
-Windows Firewall
-Secure Boot
-BitLocker
-TLS configuration
-SMBv1
-These checks help identify common endpoint security weaknesses involving system integrity, encryption, and network communications.
-System and Information Integrity
-The script checks:
-Microsoft Defender
-Windows Update
-Pending reboot status
-Endpoint protection status
-This helps identify systems that may require security updates, protection changes, or remediation.
-Login Banner
-The script also checks the Windows legal notice/login banner.
-The expected banner is configured in:
-
-config/cmmc-policy.json
 
 For example:
 {
@@ -102,6 +50,7 @@ Do not assume the sample language in this repository is your organization's lega
 Why Use a Quick Scanner?
 1. Find Problems Quickly
 A security administrator can run the script on an endpoint and immediately see which checks pass and which require attention.
+
 For example:
 
 [PASS] SC.L2-3.13.1 - Windows Firewall
@@ -111,61 +60,9 @@ For example:
 [FAIL] Windows Login Banner
 
 This gives the administrator an immediate remediation list.
-2. Standardize Endpoint Reviews
-Without automation, different administrators may check different settings.
-A script provides a consistent assessment methodology.
 
-Every endpoint can be evaluated using the same:
 
-Checks
-Configuration
-Expected values
-Output format
-Control references
-This makes results easier to compare.
-3. Identify Configuration Drift
-Endpoints can change over time.
-A machine may have been compliant when it was originally deployed but later become misconfigured because of:
 
-Software installation
-Policy changes
-Troubleshooting
-Local administrator activity
-Windows updates
-Configuration changes
-Security tools being disabled
-Running the scanner periodically can help identify this drift.
-4. Create Technical Evidence
-The script generates:
-CSV
-JSON
-TXT
-
-The CSV is useful for spreadsheet analysis.
-The JSON format is useful for automation and integration.
-
-The TXT report provides a simple human-readable summary.
-
-These reports can help administrators document what was observed on an endpoint during a particular assessment.
-
-5. Support Remediation
-The scanner is intentionally designed primarily as a read-only assessment tool.
-It identifies problems without automatically changing the endpoint.
-
-This separation is useful:
-
-ASSESS
-   ↓
-IDENTIFY GAP
-   ↓
-REMEDIATE
-   ↓
-RE-SCAN
-   ↓
-DOCUMENT RESULT
-
-A separate GPO, Intune configuration, security baseline, or remediation script can be used to correct the issue.
-Example Workflow
 A simple workflow might look like this:
                     ┌──────────────────┐
                     │ Windows Endpoint │
@@ -191,7 +88,8 @@ A simple workflow might look like this:
                              ▼
                     UPDATED EVIDENCE
 
-Example
+**Example**
+
 Run:
 .\CMMC-QuickAssessment.ps1
 
@@ -219,12 +117,17 @@ Score  : 86.67%
 
 RESULT: NOT READY
 
+
 The administrator can then investigate the two failed checks.
+
 Configuration
+
 Organization-specific requirements should be stored in:
+
 config/cmmc-policy.json
 
 For example:
+
 {
   "minimumWindowsBuild": 22621,
   "maxScreenLockMinutes": 15,
@@ -269,6 +172,8 @@ Human review
 Ticket attachments
 Quick troubleshooting
 Assessment notes
+
+
 Important: What This Tool Does NOT Do
 This tool does not replace a CMMC assessment.
 It does not automatically determine whether an organization satisfies all CMMC requirements.
