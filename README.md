@@ -1,71 +1,54 @@
-**CMMC Quick Endpoint Assessment**
+# CMMC Quick Endpoint Assessment
 
+A lightweight PowerShell tool that helps security and compliance teams quickly assess the security configuration of Windows endpoints against technical requirements relevant to **CMMC Level 2 and NIST SP 800-171**.
 
-A lightweight PowerShell-based endpoint assessment tool designed to help organizations quickly identify common Windows security configuration gaps that may affect CMMC Level 2 / NIST SP 800-171 readiness.
-This project is intended to provide a fast technical snapshot of an endpoint before a deeper compliance review, assessment, or remediation effort.
+The purpose of this project is simple:
 
+> **Quickly identify endpoint configuration gaps before they become compliance problems.**
 
-Important: This tool does not certify CMMC compliance. CMMC compliance requires organizational policies, procedures, documentation, technical controls, evidence, interviews, and assessment activities. This script focuses specifically on technical endpoint configuration.
-Why Is This Useful?
-CMMC assessments can involve a large number of endpoints, and manually checking every workstation or server can be time-consuming.
-This tool provides a quick way to answer questions such as:
+---
 
-Is Windows Firewall enabled?
+## Why This Tool Exists
 
-Is Microsoft Defender active?
+Preparing an environment for CMMC can involve reviewing a large number of Windows workstations and servers.
 
-Is BitLocker protecting the operating-system drive?
+Manually checking every endpoint for security settings is slow, inconsistent, and difficult to document.
 
-Is Secure Boot enabled?
+This tool automates a set of common endpoint security checks and produces a standardized report showing:
 
-Is UAC enabled?
+- What was checked
+- What the expected configuration was
+- What the endpoint actually reported
+- Whether the check passed or failed
+- Where the technical evidence came from
 
-Instead of manually checking each endpoint, the administrator can run one script and receive a standardized report.
+Instead of manually checking each machine, an administrator can run one PowerShell script and receive a consistent assessment report.
 
-**The Goal**
+---
 
-The goal is not to say:
+## What Does It Do?
 
-"This computer is CMMC compliant."
-The goal is to say:
-"Here are the technical configuration checks this endpoint passed or failed, along with evidence that can be reviewed."
-That distinction is important.
-A CMMC requirement can involve much more than a Windows registry setting or security feature. An organization may need policies, procedures, documentation, centralized security controls, evidence of operation, and personnel interviews.
+The assessment checks common Windows security configurations, including:
 
+|Area|Example Checks|
+|---|---|
+|Access Control|Local Administrators, Remote Desktop|
+|Authentication|UAC, workstation lock|
+|Audit & Accountability|PowerShell logging, Windows Time|
+|Configuration Management|Windows version, LSA Protection|
+|System & Communications Protection|Firewall, BitLocker, Secure Boot, SMBv1|
+|System & Information Integrity|Defender, Windows Update|
+|Security Notice|Windows login banner|
 
+The tool is designed to provide a **quick technical snapshot** of the endpoint.
 
-For example:
-{
-  "loginBanner": {
-    "title": "AUTHORIZED USE ONLY",
-    "text": "This computer system is for authorized use only.\nUnauthorized access is prohibited.\nUse of this system may be monitored, recorded, and audited."
-  }
-}
+---
 
-The scanner compares the configured Windows login banner against the organization's approved text.
-This is useful because organizations frequently have a standard security/legal notice that must be consistently deployed across endpoints.
+## Example Assessment
 
-Do not assume the sample language in this repository is your organization's legally approved banner. Have your legal/security team approve the actual language before deployment.
+Running the scanner produces results similar to:
 
-Why Use a Quick Scanner?
-1. Find Problems Quickly
-A security administrator can run the script on an endpoint and immediately see which checks pass and which require attention.
-
-For example:
-
-[PASS] SC.L2-3.13.1 - Windows Firewall
-[PASS] SC.L2-3.13.6 - BitLocker
-[FAIL] AC.L2-3.1.2 - Remote Desktop
-[PASS] IA.L2-3.5.2 - User Account Control
-[FAIL] Windows Login Banner
-
-
-**Example**
-
-Run:
-.\CMMC-QuickAssessment.ps1
-
-The console produces a summary similar to:
+```text
 ==============================================
        CMMC QUICK ENDPOINT ASSESSMENT
 ==============================================
@@ -75,19 +58,12 @@ OS       : Microsoft Windows 11 Pro
 Build    : 26100
 
 [PASS] SC.L2-3.13.1 - Windows Firewall
-
 [PASS] SC.L2-3.13.6 - BitLocker OS volume
-
 [PASS] SC.L2-3.13.5 - Secure Boot
-
 [PASS] IA.L2-3.5.2 - User Account Control
-
 [FAIL] AC.L2-3.1.2 - Remote Desktop
-
-[FAIL] AC.L2-3.1.1 - Windows login banner
-
-[PASS] SI.L2-3.14.2 - Microsoft Defender protection
-
+[FAIL] Login Banner
+[PASS] SI.L2-3.14.2 - Microsoft Defender
 
 Checks : 15
 Passed : 13
@@ -95,18 +71,241 @@ Failed : 2
 Score  : 86.67%
 
 RESULT: NOT READY
+```
 
+The important part is that the tool does not simply provide a score.
 
-The administrator can then investigate the two failed checks.
+It identifies **which configuration needs attention**.
 
-Configuration
+---
 
-Organization-specific requirements should be stored in:
+# Key Features
 
+## Quick Endpoint Assessment
+
+Run a single PowerShell script to evaluate multiple security configurations.
+
+```powershell
+.\CMMC-QuickAssessment.ps1
+```
+
+The assessment is designed to be fast enough for routine endpoint validation.
+
+---
+
+## Login Banner Validation
+
+The tool checks whether the Windows legal notice/login banner matches the organization's approved configuration.
+
+The expected banner is defined in:
+
+```text
 config/cmmc-policy.json
+```
 
-For example:
+Example:
 
+```json
+{
+  "loginBanner": {
+    "title": "AUTHORIZED USE ONLY",
+    "text": "This computer system is for authorized use only."
+  }
+}
+```
+
+Organizations should replace the example with their own approved legal/security language.
+
+> The sample login banner is provided for demonstration purposes only and is not legal advice.
+
+---
+
+## Security Configuration Checks
+
+The scanner can identify common endpoint security gaps such as:
+
+- Firewall disabled
+- BitLocker not enabled
+- Secure Boot disabled
+- Defender protection disabled
+- UAC disabled
+- Remote Desktop enabled
+- SMBv1 enabled
+- Windows Update service stopped
+- LSA Protection disabled
+- PowerShell logging not configured
+- Unexpected local administrators
+- Missing or incorrect login banner
+- Pending reboot
+
+---
+
+## Read-Only Assessment
+
+The assessment script is designed primarily to **inspect the endpoint rather than modify it**.
+
+The scanner does not automatically:
+
+- Change passwords
+- Modify Group Policy
+- Enable BitLocker
+- Disable Remote Desktop
+- Change firewall rules
+- Modify security policies
+- Change the login banner
+
+This makes it appropriate for an initial assessment or validation scan.
+
+Remediation should be performed through the organization's approved configuration-management process.
+
+---
+
+# Assessment Workflow
+
+A typical workflow looks like this:
+
+```text
+             Windows Endpoint
+                    |
+                    v
+        +-----------------------+
+        | Quick Assessment      |
+        | PowerShell Script     |
+        +-----------+-----------+
+                    |
+             +------+------+
+             |             |
+             v             v
+           PASS           FAIL
+             |             |
+             |             v
+             |        Remediation
+             |             |
+             |             v
+             |          Re-scan
+             |             |
+             +------+------+
+                    |
+                    v
+             Final Evidence
+```
+
+This makes the tool useful not only for an initial assessment, but also for **remediation validation**.
+
+---
+
+# Reports
+
+The scanner generates three report formats.
+
+```text
+output/
+├── WORKSTATION-001-20260830-173500.csv
+├── WORKSTATION-001-20260830-173500.json
+└── WORKSTATION-001-20260830-173500.txt
+```
+
+## CSV
+
+Useful for:
+
+- Excel
+- Power BI
+- Compliance reporting
+- Endpoint comparison
+- Remediation tracking
+
+## JSON
+
+Useful for:
+
+- Automation
+- APIs
+- Databases
+- SIEM integration
+- Custom dashboards
+
+## TXT
+
+Useful for:
+
+- Human review
+- Troubleshooting
+- Remediation tickets
+- Quick assessment summaries
+
+---
+
+# Installation
+
+Clone the repository:
+
+```powershell
+git clone https://github.com/YOUR-ORG/cmmc-quick-endpoint-assessment.git
+```
+
+Change to the repository directory:
+
+```powershell
+cd cmmc-quick-endpoint-assessment
+```
+
+---
+
+# Requirements
+
+The scanner requires:
+
+- Windows 10, Windows 11, or supported Windows Server
+- PowerShell 5.1 or later
+- Administrator privileges
+- Authorization to assess the endpoint
+
+Run PowerShell as Administrator.
+
+---
+
+# Running the Assessment
+
+If PowerShell execution policy prevents the script from running, use a process-scoped policy change:
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+```
+
+Then run:
+
+```powershell
+.\CMMC-QuickAssessment.ps1
+```
+
+Specify a custom configuration file:
+
+```powershell
+.\CMMC-QuickAssessment.ps1 `
+    -ConfigPath .\config\cmmc-policy.json
+```
+
+Specify a custom output directory:
+
+```powershell
+.\CMMC-QuickAssessment.ps1 `
+    -OutputPath C:\CMMC-Evidence
+```
+
+---
+
+# Configuration
+
+Organization-specific settings are stored in:
+
+```text
+config/cmmc-policy.json
+```
+
+Example:
+
+```json
 {
   "minimumWindowsBuild": 22621,
   "maxScreenLockMinutes": 15,
@@ -116,93 +315,230 @@ For example:
   ],
   "loginBanner": {
     "title": "AUTHORIZED USE ONLY",
-    "text": "Approved organizational login banner goes here."
+    "text": "This computer system is for authorized use only."
   }
 }
+```
 
-This allows organizations to modify their baseline without modifying the main PowerShell script.
-Output
-Assessment results are written to:
-output/
+Keeping policy settings separate from the PowerShell code makes it easier to customize the scanner for different environments.
 
-Read-Only by Design
-The quick assessment is designed to inspect rather than modify the endpoint.
-That means:
+---
 
-Scanner
-   │
-   ├── Reads configuration
-   ├── Tests security state
-   ├── Records evidence
-   └── Reports gaps
+# Exit Codes
 
-It does not automatically:
-X Change Group Policy
-X Enable BitLocker
-X Disable services
-X Modify firewall rules
-X Change passwords
-X Change security policy
-X Modify the login banner
+The script returns an exit code that can be used for automation.
 
-This makes it safer to run during an assessment or baseline review.
-Recommended Use
-A good operational approach is:
-Initial Assessment
-Run the scanner against your endpoint population.
-Remediation
-Investigate and correct failed checks using your organization's approved configuration-management process.
-Validation
-Run the scanner again.
-Evidence
-Retain appropriate results according to your organization's evidence-retention and security requirements.
-Continuous Monitoring
-Periodically repeat the assessment to identify configuration drift.
-Security Considerations
-Assessment reports can contain sensitive information about your environment.
-They may include:
+|Exit Code|Meaning|
+|---|---|
+|`0`|No detected failures|
+|`1`|One or more checks failed|
+|`2`|Assessment error|
 
+Example:
 
-Computer names
-Operating system versions
-Security configuration
-Local administrator information
-Security-control status
-Configuration details
-Do not commit production endpoint reports to a public GitHub repository.
-The repository's .gitignore is configured to prevent normal assessment output from being committed.
-
-Store reports according to your organization's security and evidence-handling requirements.
-
-Requirements
-Windows 10/11 or supported Windows Server
-PowerShell 5.1 or later
-Administrator privileges
-Appropriate organizational authorization to scan the endpoint
-Run from an elevated PowerShell session:
-Set-ExecutionPolicy -Scope Process Bypass
-
+```powershell
 .\CMMC-QuickAssessment.ps1
 
-CMMC Disclaimer
-This project is provided as a technical security assessment aid.
-Passing all checks does not mean that an organization is CMMC compliant or ready for certification.
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "Endpoint passed assessment."
+}
+else {
+    Write-Host "Endpoint requires review."
+}
+```
 
-The results should be reviewed by qualified security/compliance personnel and evaluated against the organization's actual:
+---
 
+# CMMC and NIST SP 800-171
 
-Control/reference
-Assessment objective being evaluated
-Technical rationale
-Expected configuration
-Evidence collected
-Limitations
+The checks in this project are mapped to technical requirements commonly associated with CMMC Level 2 and NIST SP 800-171.
 
-Test instructions
-Avoid adding automated remediation to the assessment script unless it is explicitly separated from the read-only assessment functionality.
-License
+The mapping is documented in:
 
-See LICENSE.
-Project Purpose
-The purpose of this project is simple:
-Give security teams a fast, repeatable way to identify Windows endpoint configuration gaps that may affect CMMC readiness.
+```text
+docs/controls.md
+```
+
+The evidence generated by the scanner is documented in:
+
+```text
+docs/evidence.md
+```
+
+These documents explain what each check is intended to evaluate and what evidence is collected.
+
+---
+
+# Important Compliance Disclaimer
+
+This project is **not a CMMC certification tool**.
+
+A successful endpoint scan does not mean that an organization is CMMC compliant.
+
+CMMC assessment can require evidence covering areas such as:
+
+- Policies
+- Procedures
+- System Security Plans
+- Plans of Action and Milestones
+- Asset inventories
+- Configuration management
+- Incident response
+- Security awareness
+- Personnel responsibilities
+- Access control
+- Organizational processes
+- Technical controls
+- Assessment evidence
+
+This project focuses primarily on **technical endpoint configuration**.
+
+Think of it as:
+
+```text
+CMMC Program
+     |
+     +-- Policies
+     +-- Procedures
+     +-- Documentation
+     +-- People
+     +-- Processes
+     +-- Architecture
+     +-- Technical Controls
+             |
+             +-- CMMC Quick Endpoint Assessment
+```
+
+The scanner is one component of a larger compliance program.
+
+---
+
+# Recommended Use
+
+The recommended process is:
+
+### 1. Establish Your Baseline
+
+Configure `config/cmmc-policy.json` to match your organization's approved security baseline.
+
+### 2. Assess
+
+Run the scanner against your endpoints.
+
+### 3. Review
+
+Identify failed checks.
+
+### 4. Remediate
+
+Correct the configuration using your approved security-management process.
+
+### 5. Validate
+
+Run the assessment again.
+
+### 6. Document
+
+Retain appropriate assessment and remediation evidence according to your organization's requirements.
+
+---
+
+# Security Considerations
+
+Assessment reports may contain sensitive information such as:
+
+- Computer names
+- Operating-system information
+- Security configuration
+- Local administrator information
+- Security-control status
+
+Do not upload production endpoint reports to a public GitHub repository.
+
+The repository includes a `.gitignore` intended to prevent normal assessment output from being committed.
+
+Store assessment results according to your organization's security and evidence-handling requirements.
+
+---
+
+# Project Structure
+
+```text
+cmmc-quick-endpoint-assessment/
+│
+├── CMMC-QuickAssessment.ps1
+│
+├── config/
+│   └── cmmc-policy.json
+│
+├── docs/
+│   ├── controls.md
+│   └── evidence.md
+│
+├── examples/
+│   └── sample-report.json
+│
+├── output/
+│   └── .gitkeep
+│
+├── .gitignore
+├── LICENSE
+└── README.md
+```
+
+---
+
+# Roadmap
+
+Planned or potential future improvements include:
+
+- Full CMMC Level 2 assessment-objective mapping
+- `PASS / FAIL / MANUAL REVIEW / N/A` status
+- HTML reports
+- Enterprise dashboard
+- Intune integration
+- Microsoft Defender for Endpoint integration
+- Active Directory and GPO validation
+- Centralized endpoint collection
+- Remediation recommendations
+- Configuration-drift detection
+- Historical assessment tracking
+- Power BI integration
+- Evidence package generation
+- Automated ticket creation
+
+---
+
+# Contributing
+
+Contributions are welcome.
+
+When adding a new security check, include:
+
+1. The control/reference
+2. The technical check being performed
+3. The expected configuration
+4. The actual configuration being evaluated
+5. The evidence source
+6. Known limitations
+7. Testing instructions
+
+Keep the core assessment functionality read-only whenever possible.
+
+---
+
+# License
+
+See LICENSE for licensing information.
+
+---
+
+## Project Goal
+
+The goal of this project is to make endpoint security assessment:
+
+**Fast. Repeatable. Documentable. Actionable.**
+
+It is designed to help security teams answer one practical question:
+
+> **"What technical security gaps exist on this endpoint that we should investigate before a CMMC assessment?"**
