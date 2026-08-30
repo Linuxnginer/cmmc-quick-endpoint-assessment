@@ -59,34 +59,6 @@ For example:
 [PASS] IA.L2-3.5.2 - User Account Control
 [FAIL] Windows Login Banner
 
-This gives the administrator an immediate remediation list.
-
-
-
-A simple workflow might look like this:
-                    ┌──────────────────┐
-                    │ Windows Endpoint │
-                    └────────┬─────────┘
-                             │
-                             ▼
-                 ┌────────────────────────┐
-                 │ CMMC Quick Assessment   │
-                 │      PowerShell         │
-                 └───────────┬────────────┘
-                             │
-              ┌──────────────┼──────────────┐
-              ▼              ▼              ▼
-           PASS            FAIL          EVIDENCE
-              │              │              │
-              │              ▼              │
-              │         REMEDIATION         │
-              │              │              │
-              └──────────────┼──────────────┘
-                             ▼
-                       RE-SCAN
-                             │
-                             ▼
-                    UPDATED EVIDENCE
 
 **Example**
 
@@ -103,12 +75,19 @@ OS       : Microsoft Windows 11 Pro
 Build    : 26100
 
 [PASS] SC.L2-3.13.1 - Windows Firewall
+
 [PASS] SC.L2-3.13.6 - BitLocker OS volume
+
 [PASS] SC.L2-3.13.5 - Secure Boot
+
 [PASS] IA.L2-3.5.2 - User Account Control
+
 [FAIL] AC.L2-3.1.2 - Remote Desktop
+
 [FAIL] AC.L2-3.1.1 - Windows login banner
+
 [PASS] SI.L2-3.14.2 - Microsoft Defender protection
+
 
 Checks : 15
 Passed : 13
@@ -146,50 +125,6 @@ Output
 Assessment results are written to:
 output/
 
-Example:
-output/
-├── WORKSTATION-001-20260830-173500.csv
-├── WORKSTATION-001-20260830-173500.json
-└── WORKSTATION-001-20260830-173500.txt
-
-CSV
-Useful for:
-Excel
-Power BI
-Centralized reporting
-Compliance dashboards
-Endpoint comparisons
-JSON
-Useful for:
-Automation
-APIs
-SIEM ingestion
-Databases
-Custom dashboards
-TXT
-Useful for:
-Human review
-Ticket attachments
-Quick troubleshooting
-Assessment notes
-
-
-Important: What This Tool Does NOT Do
-This tool does not replace a CMMC assessment.
-It does not automatically determine whether an organization satisfies all CMMC requirements.
-
-For example, a technical check cannot determine whether an organization has:
-
-An adequate System Security Plan (SSP)
-Appropriate policies and procedures
-Proper incident-response processes
-Appropriate personnel training
-Required documentation
-Correct CUI boundaries
-Appropriate asset inventories
-Adequate organizational processes
-Required evidence over the assessment period
-Those areas require additional organizational and assessment activities.
 Read-Only by Design
 The quick assessment is designed to inspect rather than modify the endpoint.
 That means:
@@ -227,6 +162,7 @@ Security Considerations
 Assessment reports can contain sensitive information about your environment.
 They may include:
 
+
 Computer names
 Operating system versions
 Security configuration
@@ -254,35 +190,6 @@ Passing all checks does not mean that an organization is CMMC compliant or ready
 
 The results should be reviewed by qualified security/compliance personnel and evaluated against the organization's actual:
 
-CMMC scope
-System Security Plan
-policies
-procedures
-security architecture
-configuration baselines
-evidence
-CUI environment
-Control mappings in this project are provided as technical references and should be validated against the applicable CMMC assessment objectives and current authoritative requirements.
-Roadmap
-Future versions may include:
-Full CMMC Level 2 assessment-objective coverage
-NIST SP 800-171 control/objective mapping
-PASS / FAIL / MANUAL REVIEW / N/A
-HTML reporting
-Enterprise dashboard
-Intune integration
-Microsoft Defender for Endpoint integration
-Active Directory/GPO validation
-Centralized endpoint collection
-Remediation recommendations
-Evidence-package generation
-Historical compliance tracking
-Configuration-drift detection
-Export to Power BI
-Automated ticket creation
-Contributing
-Pull requests and improvements are welcome.
-When adding a new check, include:
 
 Control/reference
 Assessment objective being evaluated
@@ -290,9 +197,11 @@ Technical rationale
 Expected configuration
 Evidence collected
 Limitations
+
 Test instructions
 Avoid adding automated remediation to the assessment script unless it is explicitly separated from the read-only assessment functionality.
 License
+
 See LICENSE.
 Project Purpose
 The purpose of this project is simple:
