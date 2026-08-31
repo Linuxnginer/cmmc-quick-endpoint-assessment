@@ -1,4 +1,4 @@
-# CMMC Quick Endpoint Assessment
+# NIST/CMMC Quick Endpoint Assessment
 
 A lightweight PowerShell tool that helps security and compliance teams quickly assess the security configuration of Windows endpoints against technical requirements relevant to **CMMC Level 2 and NIST SP 800-171**.
 
